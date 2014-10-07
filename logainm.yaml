@@ -1,0 +1,74 @@
+files:
+    townlands.csv: >
+        SELECT ?logainm_id ?name_en ?name_ga ?lon ?lat ?civil_parish_id ?civil_parish_name_en ?civil_parish_name_ga where {
+            ?logainm_id a <http://data.logainm.ie/category/BF>
+                        ; <http://xmlns.com/foaf/0.1/name> ?name_en
+                        ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
+            ?logainm_id <http://geovocab.org/geometry#geometry> 
+                    [ <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat ;
+                      <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lon ] .
+            OPTIONAL {
+                ?logainm_id <http://geovocab.org/spatial#P> ?ed_id .
+                ?ed_id a <http://data.logainm.ie/category/TR>
+                            ; <http://xmlns.com/foaf/0.1/name> ?ed_name_en
+                            ; <http://xmlns.com/foaf/0.1/name> ?ed_name_ga .
+            }
+            OPTIONAL {
+                ?logainm_id <http://geovocab.org/spatial#P> ?civil_parish_id .
+                ?civil_parish_id a <http://data.logainm.ie/category/PAR>
+                            ; <http://xmlns.com/foaf/0.1/name> ?civil_parish_name_en
+                            ; <http://xmlns.com/foaf/0.1/name> ?civil_parish_name_ga .
+            }
+            OPTIONAL {
+                ?logainm_id <http://geovocab.org/spatial#P> ?barony_id .
+                ?barony_id a <http://data.logainm.ie/category/BAR>
+                            ; <http://xmlns.com/foaf/0.1/name> ?barony_name_en
+                            ; <http://xmlns.com/foaf/0.1/name> ?barony_name_ga .
+            }
+            OPTIONAL {
+                ?logainm_id <http://geovocab.org/spatial#P> ?county_id .
+                ?county_id a <http://data.logainm.ie/category/CON>
+                            ; <http://xmlns.com/foaf/0.1/name> ?county_name_en
+                            ; <http://xmlns.com/foaf/0.1/name> ?county_name_ga .
+            }
+            FILTER langMATCHES( lang(?name_en), 'EN') FILTER langMATCHES( lang(?name_ga), 'GA' )
+            FILTER langMATCHES( lang(?ed_name_en), 'EN') FILTER langMATCHES( lang(?ed_name_ga), 'GA' )
+            FILTER langMATCHES( lang(?civil_parish_name_en), 'EN') FILTER langMATCHES( lang(?civil_parish_name_ga), 'GA' )
+            FILTER langMATCHES( lang(?barony_name_ed), 'EN') FILTER langMATCHES( lang(?barony_name_ga), 'GA' )
+            FILTER langMATCHES( lang(?county_name_en), 'EN') FILTER langMATCHES( lang(?county_name_ga), 'GA' )
+        }
+    logainm_categories.csv: >
+        SELECT ?logainm_category_code ?name_en ?name_ga WHERE {
+            ?logainm_category_code a <http://data.logainm.ie/ontology/Category>
+                                 ; <http://xmlns.com/foaf/0.1/name> ?name_en
+                                 ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
+            FILTER langMATCHES( lang(?name_en), 'EN') FILTER langMATCHES( lang(?name_ga), 'GA' )
+        } ORDER BY ?logainm_id
+
+    all_of_logainm.csv: >
+        SELECT ?logainm_id ?logainm_category_code ?name_en ?name_ga ?lon ?lat where {
+            ?logainm_id a <http://data.logainm.ie/category/BF>
+                        ; <http://xmlns.com/foaf/0.1/name> ?name_en
+                        ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
+            ?logainm_id <http://geovocab.org/geometry#geometry> 
+                            [ <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat ;
+                              <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lon ] .
+            ?logainm_id a ?logainm_category_code .
+            ?logainm_category_code a <http://data.logainm.ie/ontology/Category> .
+            FILTER langMATCHES( lang(?name_en), 'EN') FILTER langMATCHES( lang(?name_ga), 'GA' )
+        }
+    geometric_contains.csv: >
+        SELECT ?outer_obj_id ?inner_obj_id ?inner_lat ?inner_lon WHERE {
+            ?outer_obj_id <http://geovocab.org/spatial#P> ?inner_obj_id .
+            ?inner_obj_id <http://geovocab.org/geometry#geometry> 
+                    [ <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?inner_lat ;
+                      <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?inner_lon ] .
+            } ORDER BY ?outer_obj_id
+
+filters:
+    logainm_id: "x.split('/')[-1]"
+    logainm_category_code: "x.split('/')[-1]"
+    ed_id: "x.split('/')[-1]"
+    civil_parish_id: "x.split('/')[-1]"
+    barony_id: "x.split('/')[-1]"
+    county_id: "x.split('/')[-1]"
