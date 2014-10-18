@@ -1,0 +1,3 @@
+Extracting only irish townlands from file:
+
+    ./osmosis-latest/bin/osmosis --read-pbf ireland-and-northern-ireland.osm.pbf --log-progress --tag-filter accept-relations admin_level=10 --used-node --tag-filter reject-nodes --tag-filter reject-ways --used-way --write-xml osm-townlands.osm.xml
