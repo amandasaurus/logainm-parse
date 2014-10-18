@@ -1,45 +1,52 @@
 files:
-    townlands.csv: >
-        SELECT ?logainm_id ?name_en ?name_ga ?lon ?lat where {
-            ?logainm_id a <http://data.logainm.ie/category/BF>
-                        ; <http://xmlns.com/foaf/0.1/name> ?name_en
-                        ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
-            ?logainm_id <http://geovocab.org/geometry#geometry> 
-                    [ <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat ;
-                      <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lon ] .
-            FILTER langMATCHES( lang(?name_en), 'EN') FILTER langMATCHES( lang(?name_ga), 'GA' )
-        }
-    logainm_categories.csv: >
-        SELECT ?logainm_category_code ?name_en ?name_ga WHERE {
-            ?logainm_category_code a <http://data.logainm.ie/ontology/Category>
-                                 ; <http://xmlns.com/foaf/0.1/name> ?name_en
-                                 ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
-            FILTER langMATCHES( lang(?name_en), 'EN') FILTER langMATCHES( lang(?name_ga), 'GA' )
-        } ORDER BY ?logainm_id
-
-    all_of_logainm.csv: >
-        SELECT ?logainm_id ?logainm_category_code ?name_en ?name_ga ?lon ?lat where {
-            ?logainm_category_code a <http://data.logainm.ie/ontology/Category> .
-            ?logainm_id a ?logainm_category_code
-                        ; <http://xmlns.com/foaf/0.1/name> ?name_en
-                        ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
-            OPTIONAL {
+    townlands.csv:
+        sparql: >
+            SELECT ?logainm_id ?name_en ?name_ga ?lon ?lat where {
+                ?logainm_id a <http://data.logainm.ie/category/BF>
+                            ; <http://xmlns.com/foaf/0.1/name> ?name_en
+                            ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
                 ?logainm_id <http://geovocab.org/geometry#geometry> 
-                            [ <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat ;
-                              <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lon ] .
+                        [ <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat ;
+                          <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lon ] .
+                FILTER langMATCHES( lang(?name_en), 'EN') FILTER langMATCHES( lang(?name_ga), 'GA' )
             }
-            FILTER langMATCHES( lang(?name_en), 'EN') FILTER langMATCHES( lang(?name_ga), 'GA' )
-        }
-    geometric_contains.csv: >
-        SELECT ?outer_obj_id ?inner_obj_id ?inner_lat ?inner_lon WHERE {
-            ?inner_obj_id <http://geovocab.org/spatial#P> ?outer_obj_id .
-            ?inner_obj_id <http://geovocab.org/geometry#geometry> 
-                    [ <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?inner_lat ;
-                      <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?inner_lon ] .
-            } ORDER BY ?outer_obj_id
+    logainm_categories.csv:
+        sparql: >
+            SELECT ?logainm_category_code ?name_en ?name_ga WHERE {
+                ?logainm_category_code a <http://data.logainm.ie/ontology/Category>
+                                     ; <http://xmlns.com/foaf/0.1/name> ?name_en
+                                     ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
+                FILTER langMATCHES( lang(?name_en), 'EN') FILTER langMATCHES( lang(?name_ga), 'GA' )
+            } ORDER BY ?logainm_id
+    logainm_names.csv:
+        sparql: >
+            SELECT ?logainm_id ?logainm_category_code ?name_en ?name_ga where {
+                ?logainm_category_code a <http://data.logainm.ie/ontology/Category> .
+                ?logainm_id a ?logainm_category_code
+                            ; <http://xmlns.com/foaf/0.1/name> ?name_en
+                            ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
+            } ORDER BY ?logainm_id
+    geometries.csv:
+        sparql: >
+            SELECT ?logainm_id ?lon ?lat where {
+                ?logainm_id <http://geovocab.org/geometry#geometry> 
+                                [ <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat ;
+                                  <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lon ] .
 
+            } ORDER BY ?logainm_id
+    geometric_contains.csv:
+        sparql: >
+            SELECT ?outer_obj_id ?inner_obj_id ?inner_lat ?inner_lon WHERE {
+                ?inner_obj_id <http://geovocab.org/spatial#P> ?outer_obj_id .
+                ?inner_obj_id <http://geovocab.org/geometry#geometry> 
+                        [ <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?inner_lat ;
+                          <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?inner_lon ] .
+                } ORDER BY ?outer_obj_id
+
+    
 filters:
     logainm_id: "x.split('/')[-1]"
     outer_obj_id: "x.split('/')[-1]"
     inner_obj_id: "x.split('/')[-1]"
     logainm_category_code: "x.split('/')[-1]"
+
