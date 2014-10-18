@@ -25,6 +25,7 @@ files:
                 ?logainm_id a ?logainm_category_code
                             ; <http://xmlns.com/foaf/0.1/name> ?name_en
                             ; <http://xmlns.com/foaf/0.1/name> ?name_ga .
+                FILTER langMATCHES( lang(?name_en), 'EN') FILTER langMATCHES( lang(?name_ga), 'GA' )
             } ORDER BY ?logainm_id
     geometries.csv:
         sparql: >
