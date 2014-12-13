@@ -35,10 +35,11 @@ def find_convex_hulls(input_dir):
 
         if shape.geom_type != 'Polygon':
             # only one point, so put a tiny buffer around it so we have a polygon
-            print shape.geom_type
+            #print shape.geom_type
             shape = shape.buffer(0.00001)
         else:
-            print "Is polygon"
+            #print "Is polygon"
+            pass
 
 
         convex_hulls[outer_obj_id] = shape
