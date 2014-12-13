@@ -8,7 +8,7 @@ import shapely.geometry
 import sys, os
 import csv
 from collections import defaultdict
-import fiona
+import fiona, fiona.crs
 
 def find_convex_hulls(input_dir):
     contains_filename = os.path.join(input_dir, 'geometric_contains.csv')
@@ -78,8 +78,10 @@ if __name__ == '__main__':
         'properties': {'lid': 'int', 'code': 'str', 'name_en': 'str', 'name_ga': 'str'},
     }
 
+    crs = fiona.crs.from_epsg(4326)
+
     # Write a new Shapefile
-    with fiona.open('logainm.shp', 'w', 'ESRI Shapefile', schema) as c:
+    with fiona.open('logainm.shp', 'w', driver='ESRI Shapefile', crs=crs, schema=schema) as c:
         ## If there are multiple geometries, put the "for" loop here
         for logainm_id in sorted(all_of_logainm.keys()):
             row = all_of_logainm[logainm_id]
